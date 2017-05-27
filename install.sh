@@ -79,6 +79,23 @@ function prepare_system_for_install {
   esac
 }
 
+function setup_vim {
+  # Create vim color directory
+  mkdir -p ~/.vim/bundle/
+  mkdir -p ~/.vim/colors/
+
+  git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+  # Add theme
+  $(curl -fsSL https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim) > ~/.vim/colors/molokai.vim
+
+  # Setup settings
+  cp ./resources/.vimrc ~/.vimrc
+
+  # Install plugins
+  vim +PluginInstall +qall
+}
+
 function install_base_tools {
   $OS_INSTALL_COMMAND locales wget curl vim sed git zsh unzip
 }
