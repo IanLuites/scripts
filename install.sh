@@ -177,6 +177,10 @@ function install_oh_my_zsh {
   source ~/.bashrc
 }
 
+mkdir ~/tmp-install
+curl -fsSL https://github.com/IanLuites/scripts/archive/master.zip | tar zxf - -C ~/tmp-install --strip-components=1
+cd ~/tmp-install
+
 os &> /dev/null
 prepare_system_for_install
 
@@ -185,3 +189,5 @@ echo "$OS_INSTALL_COMMAND"
 
 install_base_tools
 install_oh_my_zsh
+
+rm -Rf ~/tmp-install
