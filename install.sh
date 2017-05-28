@@ -97,7 +97,7 @@ function setup_vim {
 }
 
 function install_base_tools {
-  $OS_INSTALL_COMMAND locales wget curl vim sed git zsh unzip
+  $OS_INSTALL_COMMAND locales wget curl vim sed git zsh unzip direnv
 }
 
 function font_locale_install {
@@ -131,6 +131,7 @@ function font_locale_install {
   rm -rf fonts
   cd ~
 }
+
 function install_oh_my_zsh {
   font_locale_install
 
