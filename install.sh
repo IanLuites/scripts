@@ -149,6 +149,28 @@ function install_oh_my_zsh {
   # Add plugins
   sed -ri 's/^plugins=\((.*)\)/plugins=(\1 themes zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc
 
+  # Add exports
+  mkdir -p ~/bin/
+  echo 'export PATH="$PATH:~/bin"' >> ~/.zshrc
+  echo 'export EDITOR="vim"' >> ~/.zshrc
+  echo 'export TERM="xterm-256color"' >> ~/.zshrc
+
+  # Add aliases
+  echo 'zshconfig="vim ~/.zshrc"' >> ~/.zshrc
+
+  # Only on osx
+  case $OS_ID in
+    osx )
+      echo 'apt-get="brew"' >> ~/.zshrc
+      echo 'service="brew services"' >> ~/.zshrc
+      ;;
+    * )
+      ;;
+  esac
+
+  # Enable direnv
+  echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+
   # Add to bashrc
   echo "exec zsh" >> ~/.bashrc
 
