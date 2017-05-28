@@ -3,6 +3,7 @@
 set -e
 
 function os {
+  set +e
   case `uname` in
     Linux )
       which yumls && {
@@ -33,6 +34,7 @@ function os {
       OS_ID=unknown
       ;;
   esac
+  set -e
 }
 
 function prepare_system_for_install {
@@ -79,25 +81,8 @@ function prepare_system_for_install {
   esac
 }
 
-function setup_vim {
-  # Create vim color directory
-  mkdir -p ~/.vim/bundle/
-  mkdir -p ~/.vim/colors/
-
-  git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
-  # Add theme
-  $(curl -fsSL https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim) > ~/.vim/colors/molokai.vim
-
-  # Setup settings
-  cp ./resources/.vimrc ~/.vimrc
-
-  # Install plugins
-  vim +PluginInstall +qall
-}
-
 function install_base_tools {
-  $OS_INSTALL_COMMAND locales wget curl vim sed git zsh unzip direnv
+  $OS_INSTALL_COMMAND locales wget curl sed git zsh unzip direnv
 }
 
 function font_locale_install {
@@ -120,7 +105,6 @@ function font_locale_install {
   export LANG=en_US.UTF-8
   export LANGUAGE=en_US.UTF-8
 
-  cd tmp
   # clone
   git clone https://github.com/powerline/fonts.git
   # install
@@ -129,7 +113,7 @@ function font_locale_install {
   # clean-up a bit
   cd ..
   rm -rf fonts
-  cd ~
+
 }
 
 function install_oh_my_zsh {
@@ -173,21 +157,45 @@ function install_oh_my_zsh {
 
   # Add to bashrc
   echo "exec zsh" >> ~/.bashrc
-
-  source ~/.bashrc
 }
 
-mkdir ~/tmp-install
-curl -fsSL https://github.com/IanLuites/scripts/archive/master.zip | tar zxf - -C ~/tmp-install --strip-components=1
-cd ~/tmp-install
+function install_vim {
+  $OS_INSTALL_COMMAND vim
+
+  # Create vim color directory
+  mkdir -p ~/.vim/bundle/
+  mkdir -p ~/.vim/colors/
+
+  git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+  # Add theme
+  wget https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim -O ~/.vim/colors/molokai.vim
+
+  # Setup settings
+  cp ./resources/.vimrc ~/.vimrc
+
+  # Install plugins
+  vim +PluginInstall +qall
+}
 
 os &> /dev/null
 prepare_system_for_install
+install_base_tools
 
 echo $OS_ID
 echo "$OS_INSTALL_COMMAND"
 
-install_base_tools
+mkdir -p ~/tmp-install
+cd ~/tmp-install
+wget https://github.com/IanLuites/scripts/archive/master.zip
+unzip master.zip
+cp -R ./scripts-master/* .
+rm -R ./scripts-master
+
+install_vim
 install_oh_my_zsh
 
+cd ~
 rm -Rf ~/tmp-install
+
+source ~/.bashrc
